@@ -5,11 +5,11 @@ class Terminal {
 public:
     std::string binPath;
 
-    std::string username();
-    std::string hostname();
-    std::string wd();
+    static std::string username();
+    static std::string hostname();
+    static std::string wd();
 
-    void prompt();
+    static void prompt();
     
-    std::string command();
+    static std::string command();
 };

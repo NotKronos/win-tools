@@ -1,4 +1,4 @@
-#include "term/term.h"
+#include "term.h"
 #include <iostream>
 #include <filesystem>
 #include <windows.h>
@@ -16,7 +16,7 @@ std::string Terminal::username() {
         std::cerr << "<win-tools> [ERROR]: Cannot get username";
         return "!";
     }
-    std::wstring wstr(&username[0]);
+    std::wstring wstr(reinterpret_cast<const wchar_t *>(&username[0]));
     std::string str(wstr.begin(), wstr.end());
     return str;
 }
@@ -28,7 +28,7 @@ std::string Terminal::hostname() {
         std::cerr << "<win-tools> [ERROR]: Cannot get hostname";
 		exit(0);
 	}
-    std::wstring wstr(&infoBuf[0]);
+    std::wstring wstr(reinterpret_cast<const wchar_t *>(&infoBuf[0]));
     std::string str(wstr.begin(), wstr.end());
     return str;
 }
