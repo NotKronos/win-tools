@@ -1,19 +1,10 @@
 #include <iostream>
 #include <filesystem>
 #include <direct.h>
-#include <string>
-#include <Windows.h>
+
+#include "utils.h"
 
 std::string file;
-
-bool endsWith(std::string const& fullString, std::string const& ending) {
-    if (fullString.length() >= ending.length()) {
-        return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
-    }
-    else {
-        return false;
-    }
-}
 
 void listFiles(const auto& entry, const std::string& path, HANDLE hConsole) {
     file = entry.path().string();
@@ -46,13 +37,12 @@ int main(int argc, char* argv[]) {
         bool help = false;
         for(int i = 1; i <= argc; i++)
         {
-            if ((strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) && !help)  {
+            if (checkArgs(argv[i], "--help", "-h") && !help)  {
                 help = true;
                 std::cout << "Usage: ls [FILE]" << std::endl;
                 std::cout << "List files in a directory" << std::endl;
-                std::cout << "Source code: https://github.com/NotKronos/winls" << std::endl;
             }
-            if ((strcmp(argv[i], "--recursive") == 0 || strcmp(argv[i], "-R") == 0) && !rec) {
+            if (checkArgs(argv[i], "--recursive", "-R") && !rec) {
                 rec = true;
                 for (const auto& entry : std::filesystem::recursive_directory_iterator(path)) {
                     listFiles(entry, path, hConsole);

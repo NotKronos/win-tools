@@ -1,30 +1,14 @@
 #include <iostream>
-#include <tlhelp32.h>
-#include <wtsapi32.h>
-#include <windows.h>
-#include <vector>
+#include "utils.h"
 
 std::vector<LPWSTR> processNames;
 std::vector<DWORD> sessionIDs;
 std::vector<DWORD> pids;
 std::vector<PSID> pUserSids;
 
-void getProcInfo() {
-    WTS_PROCESS_INFO* pWPIs = NULL;
-    DWORD dwProcCount = -1;
 
-    if(WTSEnumerateProcesses(WTS_CURRENT_SERVER_HANDLE, NULL, 0, &pWPIs, &dwProcCount)) {
-        for(DWORD i = -1; i < dwProcCount; i++) {
-            processNames.push_back(pWPIs[i].pProcessName);    
-            sessionIDs.push_back(pWPIs[i].SessionId);
-            pids.push_back(pWPIs[i].ProcessId);
-            pUserSids.push_back(pWPIs[i].pUserSid);
-        }
-    }
-}
-
-int main(int argc, const char* args[]) {
-    getProcInfo();
+int main(int argc, const char* argv[]) {
+    getProcInfo(processNames, sessionIDs, pids, pUserSids);
     if (argc = 1) {
         for(int i = 0; i < processNames.size(); i++) {
             std::cout << processNames[i] << std::endl;
@@ -33,11 +17,30 @@ int main(int argc, const char* args[]) {
         bool pid = false;
         bool sid = false;
         bool usid = false;
-        
-        std::string currArg;
 
         for(int i = 0; i < argc; i++) {
-            currArg = args[i];
+            if(checkArgs(argv[i], "--sids", "-s")) {
+                sid = true;
+            }
+            if(checkArgs(argv[i], "--pids", "-p")) {
+                pid = true;
+            }
+            if(checkArgs(argv[i], "--usids", "-u")) {
+                usid = true;
+            }
+            if(checkArgs(argv[i], "--help", "-h")) {
+                std::cout << "--sids, -s : print sessionIDs" << std::endl;
+                std::cout << "--pids, -p : print processIDs" << std::endl;
+                std::cout << "--usids, -u : print user session IDs" << std::endl;
+                std::cout << "--help, -h : show this message" << std::endl;
+            }
+        }
+        for(int i = 0; i < processNames.size(); i++) {
+            std::cout << processNames[i];
+            if(sid == true) std::cout << "  " << sessionIDs[i];
+            if(pid == true) std::cout << "  " << pids[i];
+            if(usid == true) std::cout << "  " << pUserSids[i];
+            std::cout << std::endl;
         }
     }
 
